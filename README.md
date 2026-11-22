@@ -1,2 +1,2 @@
-# AIplayer
-AI探索个人主页
+# AIexplorer
+AI探索·阿花个人主页
