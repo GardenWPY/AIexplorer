@@ -1,6 +1,6 @@
 # AI探索手稿 · 阿花的试验田
 
-阿花的 AI 探索之旅：感想记录、工具开发、项目复盘。站点地址：<https://gardenwpy.github.io/AIexplorer/>
+阿花的 AI 探索之旅：感想记录、工具开发。站点地址：<https://gardenwpy.github.io/AIexplorer/>
 
 ## 每周更新（推荐方式）
 
