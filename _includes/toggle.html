@@ -1,0 +1,46 @@
+<style>
+  .effects-toggle { display:flex; align-items:center; gap:2.7px; font-size:4px; color:var(--muted); cursor:pointer; user-select:none; }
+  .effects-toggle .sw { position:relative; width:10px; height:5.7px; border-radius:999px; background:#cbd5e1; flex:none; transition:background .2s ease; }
+  .effects-toggle .sw::after { content:""; position:absolute; top:.67px; left:.67px; width:4.3px; height:4.3px; border-radius:50%; background:#fff; transition:transform .2s ease; }
+  .effects-toggle.on .sw { background:#f472b6; }
+  .effects-toggle.on .sw::after { transform:translateX(4.3px); }
+  .effects-toggle .state { color:var(--text); }
+</style>
+
+<div class="container" style="padding-top:3.3px;">
+  <label class="effects-toggle" id="effectsToggle">
+    <span class="sw"></span>
+    <span>飘花特效：<span class="state">开</span></span>
+  </label>
+</div>
+
+<script>
+(function () {
+  var KEY = 'ai_effects_enabled', saved;
+  try { saved = localStorage.getItem(KEY); } catch (e) { saved = null; }
+  window.AIEffectsEnabled = saved !== '0';
+
+  var box = document.getElementById('effectsToggle');
+  if (!box) return;
+
+  function render() {
+    box.classList.toggle('on', window.AIEffectsEnabled);
+    box.querySelector('.state').textContent = window.AIEffectsEnabled ? '开' : '关';
+  }
+  function apply() {
+    var f = document.querySelector('.petal-follower');
+    if (f) f.style.display = window.AIEffectsEnabled ? '' : 'none';
+    if (!window.AIEffectsEnabled) {
+      [].forEach.call(document.querySelectorAll('.petal-flower, .drift-petal'), function (el) { el.remove(); });
+    }
+  }
+  render();
+  apply();
+  box.addEventListener('click', function () {
+    window.AIEffectsEnabled = !window.AIEffectsEnabled;
+    try { localStorage.setItem(KEY, window.AIEffectsEnabled ? '1' : '0'); } catch (e) {}
+    render();
+    apply();
+  });
+})();
+</script>

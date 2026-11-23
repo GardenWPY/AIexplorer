@@ -1,0 +1,112 @@
+<style>
+  .petal-follower {
+    position: fixed; left: 0; top: 0; width: 28px; height: 28px;
+    pointer-events: none; z-index: 9999; opacity: 0;
+    transition: opacity .25s ease; will-change: transform;
+    transform: translate3d(-100px, -100px, 0);
+  }
+  .petal-follower.show { opacity: .5; }
+  .petal-flower {
+    position: fixed; left: 0; top: 0; width: 22px; height: 22px;
+    pointer-events: none; z-index: 9998; will-change: transform, opacity;
+    animation: petal-fall var(--dur, 1.8s) cubic-bezier(.22, .61, .36, 1) forwards;
+  }
+  @keyframes petal-fall {
+    0% {
+      transform: translate3d(var(--x), var(--y), 0) rotate(0deg) scale(.85);
+      opacity: .9;
+    }
+    100% {
+      transform: translate3d(var(--ex), var(--ey), 0) rotate(var(--spin)) scale(.55);
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .petal-follower, .petal-flower { display: none !important; }
+  }
+</style>
+
+<div class="petal-follower" aria-hidden="true">
+  <svg viewBox="0 0 24 24" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+    <g fill="#f9a8d4">
+      <ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(0 12 12)"/>
+      <ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(72 12 12)"/>
+      <ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(144 12 12)"/>
+      <ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(216 12 12)"/>
+      <ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(288 12 12)"/>
+    </g>
+    <circle cx="12" cy="12" r="3" fill="#fbbf24"/>
+  </svg>
+</div>
+
+<script>
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+
+  var follower = document.querySelector('.petal-follower');
+  var tx = window.innerWidth / 2, ty = window.innerHeight / 2;
+  var cx = tx, cy = ty, raf = null;
+
+  function loop() {
+    cx += (tx - cx) * 0.16;
+    cy += (ty - cy) * 0.16;
+    follower.style.transform = 'translate3d(' + (cx - 14) + 'px,' + (cy - 14) + 'px,0) rotate(' + ((Date.now() / 40) % 360) + 'deg)';
+    raf = window.requestAnimationFrame(loop);
+  }
+
+  window.addEventListener('mousemove', function (e) {
+    if (window.AIEffectsEnabled === false) return;
+    tx = e.clientX;
+    ty = e.clientY;
+    follower.classList.add('show');
+    if (!raf) loop();
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', function () {
+    follower.classList.remove('show');
+  });
+
+  var colors = ['#f9a8d4', '#fda4af', '#c4b5fd', '#fcd34d', '#93c5fd'];
+  var alive = 0;
+
+  function flowerSVG(color) {
+    return '<svg viewBox="0 0 24 24" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
+      '<g fill="' + color + '">' +
+      '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(0 12 12)"/>' +
+      '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(72 12 12)"/>' +
+      '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(144 12 12)"/>' +
+      '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(216 12 12)"/>' +
+      '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(288 12 12)"/>' +
+      '</g><circle cx="12" cy="12" r="3" fill="#fbbf24"/></svg>';
+  }
+
+  document.addEventListener('click', function (e) {
+    if (window.AIEffectsEnabled === false) return;
+    if (alive > 40) return;
+    var n = 3 + Math.floor(Math.random() * 3);
+    for (var i = 0; i < n; i++) {
+      var el = document.createElement('span');
+      el.className = 'petal-flower';
+      el.innerHTML = flowerSVG(colors[Math.floor(Math.random() * colors.length)]);
+      var ox = e.clientX - 11 + (Math.random() * 30 - 15);
+      var oy = e.clientY - 11 + (Math.random() * 20 - 10);
+      var dx = Math.random() * 240 - 120;
+      var dy = 70 + Math.random() * 110;
+      var spin = Math.random() * 720 - 360;
+      el.style.setProperty('--x', ox + 'px');
+      el.style.setProperty('--y', oy + 'px');
+      el.style.setProperty('--ex', (ox + dx) + 'px');
+      el.style.setProperty('--ey', (oy + dy) + 'px');
+      el.style.setProperty('--spin', spin + 'deg');
+      el.style.setProperty('--dur', (1.4 + Math.random() * 0.9) + 's');
+      document.body.appendChild(el);
+      alive++;
+      el.addEventListener('animationend', function () {
+        this.remove();
+        alive--;
+      });
+    }
+  });
+})();
+</script>

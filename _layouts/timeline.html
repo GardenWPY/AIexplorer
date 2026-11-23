@@ -1,0 +1,17 @@
+---
+layout: default
+---
+<article class="timeline-page">
+  <h1>{{ page.title }}</h1>
+  {% assign posts_by_year = site.posts | group_by_exp: "post", "post.date | date: '%Y'" %}
+  {% for year in posts_by_year %}
+  <div class="tl-year">{{ year.name }}</div>
+  {% for post in year.items %}
+  <div class="tl-row">
+    <span class="tl-date">{{ post.date | date: "%m-%d" }}</span>
+    <a class="tl-title" href="{{ post.url | relative_url }}">{{ post.title }}</a>
+    <span class="tl-cat">{{ post.category }}</span>
+  </div>
+  {% endfor %}
+  {% endfor %}
+</article>

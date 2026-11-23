@@ -1,0 +1,70 @@
+<style>
+  html, body { min-height: 100%; }
+  body { position: relative; }
+  .grass-garden {
+    position: absolute; bottom: 0; left: 0; right: 0; height: 140px;
+    overflow: hidden; z-index: -1; pointer-events: none;
+  }
+  .grass-garden .hills { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .garden-flower {
+    position: absolute; bottom: var(--bottom, 30px); left: var(--left, 50%);
+    width: 16px; height: 16px;
+    animation: flower-sway 4s ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+  @keyframes flower-sway {
+    from { transform: translateY(0) rotate(-6deg); }
+    to { transform: translateY(-3px) rotate(6deg); }
+  }
+  .garden-bloom {
+    display: block; width: 100%; height: 100%;
+    transform: rotate(var(--tilt, 0deg));
+    transition: transform .25s ease;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .garden-flower { animation: none; }
+    .garden-bloom { transition: none; }
+  }
+</style>
+
+<div class="grass-garden" aria-hidden="true">
+  <svg class="hills" viewBox="0 0 800 140" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 140 L0 92 Q110 64 220 90 T440 82 T640 94 T800 78 L800 140 Z" fill="#d5e4c4"/>
+    <path d="M0 140 L0 112 Q130 90 260 114 T520 106 T800 116 L800 140 Z" fill="#9cc488"/>
+  </svg>
+  <div class="flower-layer"></div>
+</div>
+
+<script>
+(function () {
+  var garden = document.querySelector('.grass-garden');
+  if (!garden) return;
+  var layer = garden.querySelector('.flower-layer'), html = '';
+  var colors = ['#f9a8d4', '#fda4af', '#c4b5fd', '#fcd34d', '#93c5fd'];
+  var petals = '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(0 12 12)"/>' +
+    '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(72 12 12)"/>' +
+    '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(144 12 12)"/>' +
+    '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(216 12 12)"/>' +
+    '<ellipse cx="12" cy="6.5" rx="3.2" ry="5.2" transform="rotate(288 12 12)"/>';
+  var n = 28, tiers = [30, 40, 52, 44];
+  for (var i = 0; i < n; i++) {
+    var left = (2.5 + i / (n - 1) * 95 + (Math.random() * 2.4 - 1.2)).toFixed(1);
+    var bottom = (tiers[i % tiers.length] + (Math.random() * 12 - 6)).toFixed(0);
+    var delay = (Math.random() * 4).toFixed(1);
+    html += '<span class="garden-flower" style="--left:' + left + '%;--bottom:' + bottom + 'px;--delay:' + delay + 's">' +
+      '<span class="garden-bloom"><svg viewBox="0 0 24 24" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
+      '<g fill="' + colors[i % colors.length] + '">' + petals + '</g><circle cx="12" cy="12" r="3" fill="#fbbf24"/></svg></span></span>';
+  }
+  layer.innerHTML = html;
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  document.addEventListener('mousemove', function (e) {
+    var rect = garden.getBoundingClientRect();
+    if (e.clientY < rect.top || e.clientY > rect.bottom) {
+      garden.style.setProperty('--tilt', '0deg');
+      return;
+    }
+    var ratio = (e.clientX - rect.left) / rect.width * 2 - 1;
+    garden.style.setProperty('--tilt', (ratio * 14).toFixed(1) + 'deg');
+  });
+})();
+</script>

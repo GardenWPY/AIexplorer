@@ -1,0 +1,20 @@
+---
+layout: default
+---
+{% include toggle.html %}
+
+<section class="hero">
+  <h1>{{ site.hero_title }}</h1>
+  <p class="hero-desc">{{ site.description }}</p>
+</section>
+
+<section class="post-list">
+  <h2>最近更新</h2>
+  {% for post in site.posts limit: 10 %}
+  <article class="post-item">
+    <div class="post-meta">{{ post.date | date: "%Y-%m-%d" }} · {{ post.category }}</div>
+    <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+    <p>{{ post.excerpt | strip_html | truncate: 120 }}</p>
+  </article>
+  {% endfor %}
+</section>

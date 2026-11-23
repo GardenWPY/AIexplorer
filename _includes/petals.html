@@ -1,0 +1,79 @@
+<style>
+  .drift-petal {
+    position: fixed; left: 0; top: 0; width: 22px; height: 22px;
+    pointer-events: none; z-index: 9997; will-change: transform, opacity;
+  }
+  @media (prefers-reduced-motion: reduce) { .drift-petal { display: none !important; } }
+</style>
+
+<script>
+(function () {
+  if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+
+  var colors = ['#f9a8d4', '#fda4af', '#fb7185'];
+
+  function petalSVG() {
+    var c = colors[Math.floor(Math.random() * colors.length)];
+    return '<svg viewBox="0 0 24 24" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">' +
+      '<path d="M12 2 C17.5 5.5 18.5 12.5 12 22 C5.5 12.5 6.5 5.5 12 2 Z" fill="' + c + '"/></svg>';
+  }
+
+  function exitPoint(W, H) {
+    var r = Math.random();
+    if (r < 0.34) return { x: -40, y: H * (0.48 + Math.random() * 0.18) };
+    if (r < 0.67) return { x: -30 - Math.random() * 20, y: H * (0.86 + Math.random() * 0.14) };
+    return { x: W * (0.08 + Math.random() * 0.26), y: H + 30 };
+  }
+
+  function fall(idx) {
+    var el = document.createElement('span');
+    el.className = 'drift-petal';
+    el.innerHTML = petalSVG();
+    document.body.appendChild(el);
+
+    var W = window.innerWidth, H = window.innerHeight;
+    var sx = W - 30 - idx * 26, sy = -28 - idx * 14;
+    var end = exitPoint(W, H);
+    var ex = end.x - idx * 10, ey = end.y + idx * 12;
+    var dur = 7600 + Math.random() * 1600 + idx * 400;
+    var t0 = null;
+
+    function frame(ts) {
+      if (t0 === null) t0 = ts;
+      var t = (ts - t0) / dur;
+      if (t >= 1) { el.remove(); return; }
+
+      var x = sx + (ex - sx) * (t * t * (3 - 2 * t)) + Math.sin(t * Math.PI * 3) * 22;
+      var y = sy + (ey - sy) * t;
+      var rot = t > 0.4 ? (t - 0.4) * 1.6 * 220 : 0;
+      var sc = Math.cos(t * Math.PI * 2.4);
+      if (Math.abs(sc) < 0.12) sc = (sc < 0 ? -1 : 1) * 0.12;
+      var fade = t < 0.84 ? 1 : (1 - (t - 0.84) / 0.16);
+
+      el.style.transform = 'translate3d(' + x + 'px,' + y + 'px,0) rotate(' + rot + 'deg) scaleX(' + sc + ')';
+      el.style.opacity = String(0.52 * fade);
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  }
+
+  function shower() {
+    if (window.AIEffectsEnabled === false) return;
+    if (Math.random() < 0.5) {
+      fall(0);
+    } else {
+      fall(0);
+      setTimeout(function () { fall(1); }, 420);
+    }
+  }
+
+  function schedule() {
+    setTimeout(function () {
+      shower();
+      schedule();
+    }, 60000 + Math.random() * 60000);
+  }
+  schedule();
+})();
+</script>

@@ -1,0 +1,35 @@
+<style>
+  .sky-band {
+    position: absolute; top: 0; left: 0; right: 0; height: 160px;
+    overflow: hidden; z-index: 0; pointer-events: none;
+  }
+  .sky-band .sky-hills { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  .site-header, main.container { position: relative; z-index: 1; }
+  .sky-cloud {
+    position: absolute; top: var(--top); left: var(--left);
+    width: calc(100px * var(--scale, 1)); transform: translateX(-50%);
+    animation: cloud-drift var(--dur, 9s) ease-in-out infinite alternate;
+    animation-delay: var(--delay, 0s);
+  }
+  .sky-cloud svg { display: block; width: 100%; height: auto; }
+  @keyframes cloud-drift {
+    from { transform: translateX(calc(-50% - 5px)); }
+    to { transform: translateX(calc(-50% + 5px)); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .sky-cloud { animation: none; }
+  }
+</style>
+
+<div class="sky-band" aria-hidden="true">
+  <svg class="sky-hills" viewBox="0 0 1000 160" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 0 L1000 0 L1000 132 Q850 116 700 130 T400 124 T0 134 Z" fill="#cfe6f7"/>
+  </svg>
+
+  <span class="sky-cloud" style="--left:8%;--top:26px;--scale:1;--dur:10s;--delay:0s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+  <span class="sky-cloud" style="--left:15%;--top:40px;--scale:.82;--dur:11s;--delay:1.2s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+  <span class="sky-cloud" style="--left:36%;--top:18px;--scale:1.08;--dur:9s;--delay:.6s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+  <span class="sky-cloud" style="--left:55%;--top:36px;--scale:.95;--dur:12s;--delay:2s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+  <span class="sky-cloud" style="--left:62%;--top:24px;--scale:.78;--dur:10s;--delay:.9s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+  <span class="sky-cloud" style="--left:85%;--top:44px;--scale:1.02;--dur:11s;--delay:1.7s"><svg viewBox="0 0 100 44" xmlns="http://www.w3.org/2000/svg"><g fill="#fff" opacity=".86"><ellipse cx="28" cy="27" rx="22" ry="13"/><ellipse cx="50" cy="17" rx="24" ry="16"/><ellipse cx="72" cy="26" rx="20" ry="13"/><rect x="26" y="26" width="50" height="14" rx="7"/></g></svg></span>
+</div>
